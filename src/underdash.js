@@ -23,7 +23,9 @@
    * iterator when the user does not pass one in, this will be handy.
    *
    */
-  _.identity = function (val) {};
+  _.identity = function (val) {
+    return val;
+  };
 
   /**
    *
@@ -65,7 +67,15 @@
    * last element.
    *
    */
-  _.last = function (array, n) {};
+  _.last = function (array, n) {
+    if (n === undefined) {
+      return array[array.length - 1];
+    } else if (n === 0 || array.length <= n) {
+      return array.slice(0, n);
+    } else {
+      return array.slice(-n);
+    }
+  };
 
   /**
    *
@@ -78,7 +88,17 @@
    * iterator function over each item in the input collection.
    *
    */
-  _.each = function (collection, iterator) {};
+  _.each = function (collection, iterator) {
+    if (Array.isArray(collection) === true)
+      for (var i = 0; i < collection.length; i++) {
+        iterator(collection[i], i, collection); //순회하기 위한 목적
+      }
+    else {
+      for (var item in collection) {
+        iterator(collection[item], item, collection);
+      }
+    }
+  };
 
   /**
    *
@@ -110,7 +130,15 @@
    * Returns all elements of an array that pass a truth test.
    *
    */
-  _.filter = function (collection, test) {};
+  _.filter = function (collection, test) {
+    const arr = [];
+    for (var item in collection) {
+      if (test(collection[item])) {
+        arr.push(collection[item]);
+      }
+    }
+    return arr;
+  };
 
   /**
    *
@@ -119,7 +147,15 @@
    * Returns all elements of an array that don't pass a truth test.
    *
    */
-  _.reject = function (collection, test) {};
+  _.reject = function (collection, test) {
+    const arr = [];
+    for (var item in collection) {
+      if (!test(collection[item])) {
+        arr.push(collection[item]);
+      }
+    }
+    return arr;
+  };
 
   /**
    *
@@ -132,7 +168,13 @@
    * the members, it also maintains an array of results.
    *
    */
-  _.map = function (collection, iterator) {};
+  _.map = function (collection, iterator) {
+    var result = [];
+    for (var item in collection) {
+      result.push(iterator(collection[item]));
+    }
+    return result;
+  };
 
   /**
    *
@@ -151,8 +193,23 @@
    * https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
    *
    */
-  _.reduce = function (collection, iterator, accumulator) {};
-
+  _.reduce = function (collection, iterator, accumulator) {
+    // [1,1,2]
+    if (Array.isArray(collection) === true) {
+      for (let i = 0; i <= collection.length - 1; i++) {
+        if (i === 0 && accumulator === undefined) {
+          accumulator = collection[i];
+          continue;
+        }
+        accumulator = iterator(accumulator, collection[i]);
+      }
+    } else {
+      for (keys in collection) {
+        accumulator = iterator(accumulator, collection[keys]);
+      }
+    }
+    return accumulator;
+  };
   /**
    *
    * [DO NOT MODIFY] "contains"
@@ -207,7 +264,9 @@
    *  obj1 now contains key1, key2, key3 and bla.
    */
 
-  _.extend = function (obj) {};
+  _.extend = function (obj) {
+    return Object.assign(obj, ...arguments);
+  };
 
   /**
    *
@@ -216,8 +275,16 @@
    * Like extend, but doesn't ever overwrite a key that already exists in obj
    *
    */
-  _.defaults = function (obj) {};
-
+  _.defaults = function (obj) {
+    for (let i = 0; i < arguments.length; i++) {
+      for (var key in arguments[i]) {
+        if (!obj.hasOwnProperty([key])) {
+          obj[key] = arguments[i][key];
+        }
+      }
+    }
+    return obj;
+  };
   /**
    *
    * ADVANCED COLLECTION OPERATIONS
@@ -274,6 +341,11 @@
    *
    */
   _.flatten = function (nestedArray) {
-    // Hint: Use Array.isArray to check if something is an array
+    const result = nestedArray.join();
+    const answer = [];
+    for (let i = 0; i < result.length; i += 2) {
+      answer.push(result[i] * 1);
+    }
+    return answer;
   };
 })();
